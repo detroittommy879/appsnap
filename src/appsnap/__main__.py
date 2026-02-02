@@ -45,10 +45,10 @@ def generate_temp_path() -> str:
 def sanitize_filename(title: str) -> str:
     """
     Sanitize window title for use as filename.
-    
+
     Args:
         title: Window title to sanitize
-        
+
     Returns:
         Safe filename string
     """
@@ -64,33 +64,34 @@ def sanitize_filename(title: str) -> str:
 def capture_all_windows(output_dir: str, json_output: bool) -> None:
     """
     Capture screenshots of all windows to a directory.
-    
+
     Args:
         output_dir: Directory to save all screenshots
         json_output: Whether to output JSON summary
     """
     windows = find_all_windows()
-    
+
     if not windows:
         print("No windows found.", file=sys.stderr)
         sys.exit(1)
-    
+
     # Create output directory
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
-    
+
     # Track duplicate titles for numbering
     title_counts = {}
     results = []
     successful = 0
     failed = 0
-    
-    print(f"Capturing {len(windows)} window(s) to {output_path.resolve()}...\n")
-    
+
+    print(
+        f"Capturing {len(windows)} window(s) to {output_path.resolve()}...\n")
+
     for window in windows:
         title = window["title"]
         handle = window["handle"]
-        
+
         # Handle duplicate titles with counter
         if title in title_counts:
             title_counts[title] += 1
@@ -100,9 +101,9 @@ def capture_all_windows(output_dir: str, json_output: bool) -> None:
             title_counts[title] = 1
             safe_title = sanitize_filename(title)
             filename = f"{safe_title}.png"
-        
+
         output_file = output_path / filename
-        
+
         try:
             capture_window_screenshot(handle, str(output_file))
             print(f"[OK] {title}")
@@ -120,11 +121,11 @@ def capture_all_windows(output_dir: str, json_output: bool) -> None:
                 "error": str(e)
             })
             failed += 1
-    
+
     # Summary
     print(f"\nComplete: {successful} successful, {failed} failed")
     print(f"Screenshots saved to: {output_path.resolve()}")
-    
+
     # JSON output if requested
     if json_output:
         summary = {
