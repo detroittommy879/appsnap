@@ -1,6 +1,6 @@
 [project]
 name = "appsnap"
-version = "0.1.0"
+version = "0.1.1"
 description = "Fast Windows screenshot tool for AI coding agents"
 authors = [
     { name = "appsnap contributors" }
@@ -25,8 +25,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "mss>=9.0.0",
-    "pillow>=10.0.0",
+    "pillow>=11.0.0",
     "fuzzywuzzy>=0.18.0",
     "python-levenshtein>=0.25.0",
     "pywin32>=306",

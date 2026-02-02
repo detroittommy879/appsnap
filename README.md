@@ -18,20 +18,41 @@
 ### Installation
 
 ```bash
-# Install with uvx (recommended)
+# Install with uvx (recommended - when published to PyPI)
 uvx appsnap
 
-# Or install with uv
+# Or install with uv tool
 uv tool install appsnap
 
-# Or install in development mode
+# Development mode (local testing)
 git clone <repo>
 cd appsnap
+uv venv
 uv pip install -e .
 ```
 
 ### Usage
 
+**Option 1: After activating venv**
+```bash
+# Activate the virtual environment first
+.venv\Scripts\activate  # Windows
+# source .venv/bin/activate  # Linux/Mac
+
+# Then use appsnap directly
+appsnap --list
+appsnap "Visual Studio Code"
+```
+
+**Option 2: Using uv run (no activation needed)**
+```bash
+# Run from within the appsnap directory
+cd appsnap
+uv run appsnap --list
+uv run appsnap "Chrome" --output screenshot.png
+```
+
+**Common Commands:**
 ```bash
 # List all capturable windows
 appsnap --list
@@ -44,7 +65,7 @@ appsnap "Chrome" --output screenshot.png
 
 # JSON output for agents
 appsnap "Notepad" --json
-# {"path": "/tmp/appsnap_20260202_153045.png", "window": "Notepad", "bbox": [100, 200, 800, 600]}
+# {"path": "C:\\Temp\\appsnap\\appsnap_20260202_153045.png", "window": "Notepad", "bbox": [100, 200, 800, 600]}
 
 # Adjust fuzzy matching threshold (0-100, default 70)
 appsnap "VS" --threshold 60
@@ -55,6 +76,7 @@ appsnap "VS" --threshold 60
 ### Claude Desktop Skill
 
 Add to your agent prompt or skill:
+
 ```
 When you need to verify UI changes, use: appsnap "App Name" --json
 Parse the JSON output to get the screenshot path and window metadata.
@@ -99,11 +121,11 @@ options:
 
 ## 🛠️ How It Works
 
-1. **DPI Awareness** - Sets process DPI awareness for correct scaling
-2. **Window Enumeration** - Uses Win32 API to list visible windows
-3. **Fuzzy Matching** - Finds windows using `fuzzywuzzy` for flexibility
-4. **Region Capture** - Uses `mss` library for fast region-based screenshots
-5. **Output** - Saves to temp or custom location, prints path to stdout
+1. **DPI Awareness** - Sets process DPI awareness for correct scaling on high-DPI displays
+2. **Window Enumeration** - Uses Win32 API to enumerate all visible, non-minimized windows
+3. **Fuzzy Matching** - Finds windows using `fuzzywuzzy` for flexible name matching
+4. **Direct Capture** - Uses Pillow's `ImageGrab.grab()` with window coordinates for accurate screenshots
+5. **Output** - Saves to temp or custom location, prints path to stdout for easy agent parsing
 
 ## 🔧 Development
 
@@ -128,15 +150,20 @@ uv run appsnap --list
 - Try lowering the threshold: `--threshold 60`
 - Make sure the window is visible (not minimized)
 
-### Screenshots are black or incorrect
+### Screenshots are blank, wrong window, or multiple windows
 
-- Ensure the window is not minimized or occluded
+**v0.1.1 Fix:** Switched from MSS to Pillow's ImageGrab for better accuracy on multi-monitor setups.
+
+If you still have issues:
+- Ensure the window is not minimized (minimized windows are now filtered out)
 - Try bringing the window to the foreground first
+- On multi-monitor setups, ensure correct DPI scaling per monitor
 - Some GPU-accelerated apps may have capture limitations
 
 ### DPI/Scaling issues
 
 The tool automatically handles DPI awareness. If you see incorrect sizing:
+
 - Ensure Windows display scaling is consistent
 - Check that the app respects DPI settings
 
@@ -144,9 +171,10 @@ The tool automatically handles DPI awareness. If you see incorrect sizing:
 
 MIT License - see [LICENSE](LICENSE) for details
 
-## 🙏 Acknowledgments
+## Pillow](https://github.com/python-pillow/Pillow) - Screenshot capture and image processing
+- [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy) - Fuzzy string matching
+- [pywin32](https://github.com/mhammond/pywin32) - Windows API access
 
-Built on the excellent Windows-MCP project patterns and libraries:
 - [mss](https://github.com/BoboTiG/python-mss) - Fast screenshot capture
 - [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy) - Fuzzy string matching
 - [Pillow](https://github.com/python-pillow/Pillow) - Image processing

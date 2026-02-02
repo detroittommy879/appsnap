@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import NoReturn, Optional
 
 from appsnap import __version__
-from appsnap.capture import capture_region, validate_output_path
+from appsnap.capture import capture_window as capture_window_screenshot, validate_output_path
 from appsnap.windows import find_window, get_window_list_formatted
 
 
@@ -62,8 +62,10 @@ def capture_window(
             f'Error: No window found matching "{window_name}" (threshold: {threshold})',
             file=sys.stderr,
         )
-        print("\nTip: Use 'appsnap --list' to see all available windows", file=sys.stderr)
-        print("     Or try lowering the threshold with '--threshold 60'", file=sys.stderr)
+        print("\nTip: Use 'appsnap --list' to see all available windows",
+              file=sys.stderr)
+        print("     Or try lowering the threshold with '--threshold 60'",
+              file=sys.stderr)
         sys.exit(1)
 
     # Determine output path
@@ -79,7 +81,7 @@ def capture_window(
 
     # Capture the screenshot
     try:
-        capture_region(window["bbox"], output_path)
+        capture_window_screenshot(window["handle"], output_path)
     except ValueError as e:
         print(f"Error capturing screenshot: {e}", file=sys.stderr)
         sys.exit(1)
@@ -99,7 +101,8 @@ def capture_window(
         print(str(Path(output_path).resolve()))
         if output_path.startswith(tempfile.gettempdir()):
             print(f"Window: {window['title']}", file=sys.stderr)
-            print(f"Note: Temp files may be auto-deleted by the system", file=sys.stderr)
+            print(f"Note: Temp files may be auto-deleted by the system",
+                  file=sys.stderr)
 
 
 def main() -> NoReturn:

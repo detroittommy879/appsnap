@@ -17,7 +17,8 @@ def setup_dpi_awareness() -> None:
     Uses Per-Monitor DPI Awareness (v2) if available, falls back to basic DPI awareness.
     """
     try:
-        ctypes.windll.shcore.SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE)
+        ctypes.windll.shcore.SetProcessDpiAwareness(
+            PROCESS_PER_MONITOR_DPI_AWARE)
     except Exception:
         # Fallback for older Windows versions
         ctypes.windll.user32.SetProcessDPIAware()
@@ -37,6 +38,10 @@ def find_all_windows() -> List[Dict[str, any]]:
 
     def callback(hwnd, _):
         if win32gui.IsWindow(hwnd) and win32gui.IsWindowVisible(hwnd):
+            # Skip minimized windows
+            if win32gui.IsIconic(hwnd):
+                return
+            
             title = win32gui.GetWindowText(hwnd)
             if title:  # Only include windows with titles
                 try:
