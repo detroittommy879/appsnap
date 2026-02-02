@@ -1,6 +1,6 @@
 [project]
 name = "appsnap"
-version = "0.1.1"
+version = "0.1.2"
 description = "Fast Windows screenshot tool for AI coding agents"
 authors = [
     { name = "appsnap contributors" }

@@ -1,6 +1,6 @@
 """appsnap - Fast Windows screenshot tool for AI coding agents."""
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "appsnap contributors"
 __license__ = "MIT"
 
