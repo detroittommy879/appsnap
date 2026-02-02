@@ -72,22 +72,22 @@ def capture_window(hwnd: int, output_path: str) -> None:
                 (bmpinfo['bmWidth'], bmpinfo['bmHeight']),
                 bmpstr, 'raw', 'BGRX', 0, 1
             )
-            
+
             # Clean up
             win32gui.DeleteObject(saveBitMap.GetHandle())
             saveDC.DeleteDC()
             mfcDC.DeleteDC()
             win32gui.ReleaseDC(hwnd, hwndDC)
-            
+
             img.save(str(output_path_obj), "PNG")
             return
-        
+
         # PrintWindow failed, clean up before fallback
         win32gui.DeleteObject(saveBitMap.GetHandle())
         saveDC.DeleteDC()
         mfcDC.DeleteDC()
         win32gui.ReleaseDC(hwnd, hwndDC)
-        
+
     except Exception:
         pass  # Fall through to ImageGrab fallback
 
@@ -103,13 +103,13 @@ def capture_window(hwnd: int, output_path: str) -> None:
 
         # Capture the screen region where the window is located
         img = ImageGrab.grab(bbox=(left, top, right, bottom), all_screens=True)
-        
+
         if img is None or img.size[0] == 0 or img.size[1] == 0:
             raise ValueError("Captured image is empty")
-        
+
         img.save(str(output_path_obj), "PNG")
         return
-        
+
     except Exception as e:
         raise ValueError(f"Failed to capture window: {e}")
 
