@@ -43,9 +43,11 @@ dev = [
 appsnap = "appsnap.__main__:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/appsnap"
-Repository = "https://github.com/yourusername/appsnap"
-Issues = "https://github.com/yourusername/appsnap/issues"
+Homepage = "https://github.com/detroittommy879/appsnap"
+Repository = "https://github.com/detroittommy879/appsnap"
+Issues = "https://github.com/detroittommy879/appsnap/issues"
+Documentation = "https://github.com/detroittommy879/appsnap#readme"
+Changelog = "https://github.com/detroittommy879/appsnap/releases"
 
 [build-system]
 requires = ["hatchling"]

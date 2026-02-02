@@ -20,14 +20,20 @@
 ### Installation
 
 ```bash
-# Install with uvx (recommended - when published to PyPI)
+# Install from PyPI with uvx (recommended)
 uvx appsnap
 
-# Or install with uv tool
+# Or install as a tool with uv
 uv tool install appsnap
 
+# Or with pipx
+pipx install appsnap
+
+# Install from GitHub (development version)
+uv tool install git+https://github.com/detroittommy879/appsnap.git
+
 # Development mode (local testing)
-git clone <repo>
+git clone https://github.com/detroittommy879/appsnap.git
 cd appsnap
 uv venv
 uv pip install -e .
@@ -214,18 +220,24 @@ The tool automatically handles DPI awareness. If you see incorrect sizing:
 
 MIT License - see [LICENSE](LICENSE) for details
 
-## Pillow](https://github.com/python-pillow/Pillow) - Screenshot capture and image processing
+## 🙏 Acknowledgments
 
+Built on the excellent Windows-MCP project patterns and libraries:
+
+- [Pillow](https://github.com/python-pillow/Pillow) - Screenshot capture and image processing
 - [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy) - Fuzzy string matching
 - [pywin32](https://github.com/mhammond/pywin32) - Windows API access
-
-- [mss](https://github.com/BoboTiG/python-mss) - Fast screenshot capture
-- [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy) - Fuzzy string matching
-- [Pillow](https://github.com/python-pillow/Pillow) - Image processing
 
 ## 🤝 Contributing
 
 Contributions welcome! Please feel free to submit issues or pull requests.
+
+For maintainers publishing to PyPI, see [PUBLISHING.md](PUBLISHING.md) for detailed instructions on:
+
+- Setting up GitHub Actions for automated PyPI releases
+- Manual publishing workflow
+- AI agent skill integration
+- Troubleshooting
 
 ---
 
