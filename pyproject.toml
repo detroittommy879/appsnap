@@ -1,0 +1,74 @@
+[project]
+name = "appsnap"
+version = "0.1.0"
+description = "Fast Windows screenshot tool for AI coding agents"
+authors = [
+    { name = "appsnap contributors" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.10"
+keywords = ["screenshot", "windows", "cli", "automation", "ai-agent", "desktop"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: Microsoft :: Windows",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Utilities",
+]
+
+dependencies = [
+    "mss>=9.0.0",
+    "pillow>=10.0.0",
+    "fuzzywuzzy>=0.18.0",
+    "python-levenshtein>=0.25.0",
+    "pywin32>=306",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "black>=24.0.0",
+    "ruff>=0.3.0",
+]
+
+[project.scripts]
+appsnap = "appsnap.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/yourusername/appsnap"
+Repository = "https://github.com/yourusername/appsnap"
+Issues = "https://github.com/yourusername/appsnap/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/appsnap"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "-v --cov=appsnap --cov-report=term-missing"
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = []
