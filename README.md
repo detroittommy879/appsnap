@@ -7,11 +7,13 @@
 ## ✨ Features
 
 - 🎯 **Window-specific capture** - Target apps by name with fuzzy matching
+- � **Bulk capture** - Screenshot all windows at once for testing
 - 🚀 **Fast** - Screenshots in ~0.1-0.3 seconds
 - 🤖 **Agent-friendly** - JSON output and stdout paths for easy parsing
 - 📁 **Smart defaults** - Temp directory with auto-cleanup
 - 🔍 **List windows** - See all capturable windows
 - 🎨 **DPI-aware** - Handles high-DPI displays correctly
+- 🔢 **Duplicate handling** - Auto-numbers windows with identical titles
 
 ## 🚀 Quick Start
 
@@ -72,6 +74,12 @@ appsnap "Notepad" --json
 
 # Adjust fuzzy matching threshold (0-100, default 70)
 appsnap "VS" --threshold 60
+
+# Capture ALL windows to a folder (great for testing!)
+appsnap --all ./screenshots
+
+# Capture all with JSON summary
+appsnap --all ./test-screens --json
 ```
 
 ## 🤖 AI Agent Integration
@@ -116,11 +124,37 @@ positional arguments:
 options:
   -h, --help            Show this help message and exit
   -l, --list            List all capturable windows
+  -a DIR, --all DIR     Capture all windows to specified directory
   -o PATH, --output PATH
                         Output file path (default: temp directory)
   -t N, --threshold N   Fuzzy match threshold 0-100 (default: 70)
   -j, --json            Output JSON with path and metadata
 ```
+
+### Bulk Capture Example
+
+The `--all` flag is perfect for quickly testing that all windows capture correctly:
+
+```bash
+# Capture all windows to a test folder
+uv run appsnap --all ./test-captures
+
+# Output:
+# Capturing 42 window(s) to C:\path\to\test-captures...
+#
+# [OK] Visual Studio Code
+# [OK] Chrome - Google Search
+# [OK] Task Manager
+# [OK] Settings
+# [OK] PowerShell_1  # Auto-numbered duplicate
+# [OK] PowerShell_2  # Auto-numbered duplicate
+# ...
+#
+# Complete: 40 successful, 2 failed
+# Screenshots saved to: C:\path\to\test-captures
+```
+
+Windows with the same title automatically get numbered (e.g., `PowerShell_1.png`, `PowerShell_2.png`).
 
 ## 🛠️ How It Works
 

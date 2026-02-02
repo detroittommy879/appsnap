@@ -10,7 +10,7 @@ from typing import NoReturn, Optional
 
 from appsnap import __version__
 from appsnap.capture import capture_window as capture_window_screenshot, validate_output_path
-from appsnap.windows import find_window, get_window_list_formatted
+from appsnap.windows import find_window, get_window_list_formatted, find_all_windows
 
 
 def list_windows() -> None:
@@ -40,6 +40,101 @@ def generate_temp_path() -> str:
     temp_dir = Path(tempfile.gettempdir()) / "appsnap"
     temp_dir.mkdir(exist_ok=True)
     return str(temp_dir / filename)
+
+
+def sanitize_filename(title: str) -> str:
+    """
+    Sanitize window title for use as filename.
+    
+    Args:
+        title: Window title to sanitize
+        
+    Returns:
+        Safe filename string
+    """
+    # Replace invalid filename characters
+    invalid_chars = '<>:"/\\|?*'
+    for char in invalid_chars:
+        title = title.replace(char, '_')
+    # Limit length and strip whitespace
+    title = title.strip()[:100]
+    return title if title else "untitled"
+
+
+def capture_all_windows(output_dir: str, json_output: bool) -> None:
+    """
+    Capture screenshots of all windows to a directory.
+    
+    Args:
+        output_dir: Directory to save all screenshots
+        json_output: Whether to output JSON summary
+    """
+    windows = find_all_windows()
+    
+    if not windows:
+        print("No windows found.", file=sys.stderr)
+        sys.exit(1)
+    
+    # Create output directory
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    
+    # Track duplicate titles for numbering
+    title_counts = {}
+    results = []
+    successful = 0
+    failed = 0
+    
+    print(f"Capturing {len(windows)} window(s) to {output_path.resolve()}...\n")
+    
+    for window in windows:
+        title = window["title"]
+        handle = window["handle"]
+        
+        # Handle duplicate titles with counter
+        if title in title_counts:
+            title_counts[title] += 1
+            safe_title = sanitize_filename(title)
+            filename = f"{safe_title}_{title_counts[title]}.png"
+        else:
+            title_counts[title] = 1
+            safe_title = sanitize_filename(title)
+            filename = f"{safe_title}.png"
+        
+        output_file = output_path / filename
+        
+        try:
+            capture_window_screenshot(handle, str(output_file))
+            print(f"[OK] {title}")
+            results.append({
+                "window": title,
+                "path": str(output_file.resolve()),
+                "status": "success"
+            })
+            successful += 1
+        except Exception as e:
+            print(f"[FAIL] {title}: {e}", file=sys.stderr)
+            results.append({
+                "window": title,
+                "status": "failed",
+                "error": str(e)
+            })
+            failed += 1
+    
+    # Summary
+    print(f"\nComplete: {successful} successful, {failed} failed")
+    print(f"Screenshots saved to: {output_path.resolve()}")
+    
+    # JSON output if requested
+    if json_output:
+        summary = {
+            "output_dir": str(output_path.resolve()),
+            "total": len(windows),
+            "successful": successful,
+            "failed": failed,
+            "results": results
+        }
+        print(json.dumps(summary, indent=2))
 
 
 def capture_window(
@@ -128,6 +223,13 @@ def main() -> NoReturn:
     )
 
     parser.add_argument(
+        "-a",
+        "--all",
+        metavar="DIR",
+        help="Capture all windows to specified directory",
+    )
+
+    parser.add_argument(
         "-o",
         "--output",
         metavar="PATH",
@@ -163,6 +265,11 @@ def main() -> NoReturn:
     # Handle --list flag
     if args.list:
         list_windows()
+
+    # Handle --all flag
+    if args.all:
+        capture_all_windows(args.all, args.json)
+        sys.exit(0)
 
     # Validate arguments
     if not args.window_name:
