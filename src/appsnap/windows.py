@@ -41,7 +41,7 @@ def find_all_windows() -> List[Dict[str, any]]:
             # Skip minimized windows
             if win32gui.IsIconic(hwnd):
                 return
-            
+
             title = win32gui.GetWindowText(hwnd)
             if title:  # Only include windows with titles
                 try:

@@ -34,6 +34,7 @@ uv pip install -e .
 ### Usage
 
 **Option 1: After activating venv**
+
 ```bash
 # Activate the virtual environment first
 .venv\Scripts\activate  # Windows
@@ -45,6 +46,7 @@ appsnap "Visual Studio Code"
 ```
 
 **Option 2: Using uv run (no activation needed)**
+
 ```bash
 # Run from within the appsnap directory
 cd appsnap
@@ -53,6 +55,7 @@ uv run appsnap "Chrome" --output screenshot.png
 ```
 
 **Common Commands:**
+
 ```bash
 # List all capturable windows
 appsnap --list
@@ -124,7 +127,7 @@ options:
 1. **DPI Awareness** - Sets process DPI awareness for correct scaling on high-DPI displays
 2. **Window Enumeration** - Uses Win32 API to enumerate all visible, non-minimized windows
 3. **Fuzzy Matching** - Finds windows using `fuzzywuzzy` for flexible name matching
-4. **Direct Capture** - Uses Pillow's `ImageGrab.grab()` with window coordinates for accurate screenshots
+4. **Direct Window Capture** - Uses Win32 `PrintWindow` API to capture window content directly (works even when partially occluded)
 5. **Output** - Saves to temp or custom location, prints path to stdout for easy agent parsing
 
 ## 🔧 Development
@@ -152,13 +155,19 @@ uv run appsnap --list
 
 ### Screenshots are blank, wrong window, or multiple windows
 
-**v0.1.1 Fix:** Switched from MSS to Pillow's ImageGrab for better accuracy on multi-monitor setups.
+**v0.1.1 Fix:** Switched to Win32 PrintWindow API for direct window content capture.
+
+This method captures the actual window content, not screen regions, so it:
+
+- Works correctly on multi-monitor setups
+- Captures partially occluded windows
+- Handles DPI scaling properly
 
 If you still have issues:
-- Ensure the window is not minimized (minimized windows are now filtered out)
-- Try bringing the window to the foreground first
-- On multi-monitor setups, ensure correct DPI scaling per monitor
-- Some GPU-accelerated apps may have capture limitations
+
+- Ensure the window is not minimized (minimized windows cannot be captured)
+- Some apps (especially GPU-accelerated ones) may not respond to PrintWindow correctly
+- Try bringing the window to foreground if capture fails
 
 ### DPI/Scaling issues
 
@@ -172,6 +181,7 @@ The tool automatically handles DPI awareness. If you see incorrect sizing:
 MIT License - see [LICENSE](LICENSE) for details
 
 ## Pillow](https://github.com/python-pillow/Pillow) - Screenshot capture and image processing
+
 - [fuzzywuzzy](https://github.com/seatgeek/fuzzywuzzy) - Fuzzy string matching
 - [pywin32](https://github.com/mhammond/pywin32) - Windows API access
 
